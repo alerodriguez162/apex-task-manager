@@ -6,7 +6,20 @@ Full Stack Task Manager built with an AI-assisted workflow for **Apex Bench — 
 
 - **Frontend:** React + TypeScript + Vite
 - **Backend:** Node.js + Express + TypeScript
-- **Database:** SQLite (from Day 2)
+- **Database:** SQLite (`better-sqlite3`)
+
+## API (Day 2)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/health` | Health check |
+| GET | `/api/tasks` | List tasks (`?status=&priority=`) |
+| GET | `/api/tasks/:id` | Get task |
+| POST | `/api/tasks` | Create task |
+| PATCH | `/api/tasks/:id` | Update task |
+| DELETE | `/api/tasks/:id` | Delete task |
+
+Task fields: `title`, `description`, `status` (`todo` \| `in_progress` \| `done`), `priority` (`low` \| `medium` \| `high`).
 
 ## Daily plan
 
