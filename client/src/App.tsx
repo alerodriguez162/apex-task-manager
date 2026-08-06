@@ -1,54 +1,50 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { createTask, fetchTasks } from './api'
 import { TaskForm } from './components/TaskForm'
 import { TaskItem } from './components/TaskItem'
 import type { Task, TaskDraft } from './types'
 import './App.css'
 
-const MOCK_TASKS: Task[] = [
-  {
-    id: 'mock-1',
-    title: 'Diseñar shell del Task Manager',
-    description: 'Layout, formulario y lista con datos locales.',
-    status: 'done',
-    priority: 'high',
-    createdAt: '2026-08-05T14:00:00.000Z',
-    updatedAt: '2026-08-05T15:00:00.000Z',
-  },
-  {
-    id: 'mock-2',
-    title: 'Conectar listado a la API',
-    description: 'Pendiente para el día 4.',
-    status: 'todo',
-    priority: 'medium',
-    createdAt: '2026-08-05T14:10:00.000Z',
-    updatedAt: '2026-08-05T14:10:00.000Z',
-  },
-  {
-    id: 'mock-3',
-    title: 'Revisar prioridades en la UI',
-    description: null,
-    status: 'in_progress',
-    priority: 'low',
-    createdAt: '2026-08-05T14:20:00.000Z',
-    updatedAt: '2026-08-05T14:30:00.000Z',
-  },
-]
-
 function App() {
-  const [tasks, setTasks] = useState<Task[]>(MOCK_TASKS)
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [creating, setCreating] = useState(false)
 
-  function handleCreate(draft: TaskDraft) {
-    const now = new Date().toISOString()
-    const task: Task = {
-      id: crypto.randomUUID(),
-      title: draft.title,
-      description: draft.description || null,
-      status: draft.status,
-      priority: draft.priority,
-      createdAt: now,
-      updatedAt: now,
+  useEffect(() => {
+    let cancelled = false
+
+    setLoading(true)
+    setError(null)
+    fetchTasks()
+      .then((data) => {
+        if (!cancelled) setTasks(data)
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setError(err.message)
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => {
+      cancelled = true
     }
-    setTasks((current) => [task, ...current])
+  }, [])
+
+  async function handleCreate(draft: TaskDraft) {
+    setCreating(true)
+    setError(null)
+    try {
+      const task = await createTask(draft)
+      setTasks((current) => [task, ...current])
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error al crear la tarea'
+      setError(message)
+      throw err instanceof Error ? err : new Error(message)
+    } finally {
+      setCreating(false)
+    }
   }
 
   return (
@@ -57,19 +53,27 @@ function App() {
         <p className="eyebrow">Apex Bench · Week 1</p>
         <h1>Task Manager</h1>
         <p className="lede">
-          Día 3: shell de UI con formulario, lista y datos mock locales.
+          Día 4: listado y creación conectados a la API REST.
         </p>
       </header>
 
-      <TaskForm onSubmit={handleCreate} />
+      {error && (
+        <p className="banner error" role="alert">
+          {error}
+        </p>
+      )}
+
+      <TaskForm onSubmit={handleCreate} disabled={creating} />
 
       <section className="task-list" aria-live="polite">
         <div className="task-list-header">
           <h2>Tareas</h2>
-          <span className="task-count">{tasks.length}</span>
+          <span className="task-count">{loading ? '…' : tasks.length}</span>
         </div>
 
-        {tasks.length === 0 ? (
+        {loading ? (
+          <p className="empty">Cargando tareas…</p>
+        ) : tasks.length === 0 ? (
           <p className="empty">No hay tareas todavía. Crea la primera arriba.</p>
         ) : (
           <ul>

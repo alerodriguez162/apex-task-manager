@@ -10,7 +10,8 @@ import {
 } from '../types'
 
 type TaskFormProps = {
-  onSubmit: (draft: TaskDraft) => void
+  onSubmit: (draft: TaskDraft) => void | Promise<void>
+  disabled?: boolean
 }
 
 const emptyDraft: TaskDraft = {
@@ -20,13 +21,13 @@ const emptyDraft: TaskDraft = {
   priority: 'medium',
 }
 
-export function TaskForm({ onSubmit }: TaskFormProps) {
+export function TaskForm({ onSubmit, disabled = false }: TaskFormProps) {
   const [draft, setDraft] = useState<TaskDraft>(emptyDraft)
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!draft.title.trim()) return
-    onSubmit({
+    if (!draft.title.trim() || disabled) return
+    await onSubmit({
       ...draft,
       title: draft.title.trim(),
       description: draft.description.trim(),
@@ -48,6 +49,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
           placeholder="Qué hay que hacer"
           required
           autoComplete="off"
+          disabled={disabled}
         />
       </label>
 
@@ -59,6 +61,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
           onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
           placeholder="Detalles opcionales"
           rows={3}
+          disabled={disabled}
         />
       </label>
 
@@ -71,6 +74,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             onChange={(e) =>
               setDraft((d) => ({ ...d, status: e.target.value as TaskStatus }))
             }
+            disabled={disabled}
           >
             {TASK_STATUSES.map((status) => (
               <option key={status} value={status}>
@@ -88,6 +92,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             onChange={(e) =>
               setDraft((d) => ({ ...d, priority: e.target.value as TaskPriority }))
             }
+            disabled={disabled}
           >
             {TASK_PRIORITIES.map((priority) => (
               <option key={priority} value={priority}>
@@ -98,7 +103,9 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
         </label>
       </div>
 
-      <button type="submit">Agregar tarea</button>
+      <button type="submit" disabled={disabled}>
+        {disabled ? 'Guardando…' : 'Agregar tarea'}
+      </button>
     </form>
   )
 }

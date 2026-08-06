@@ -237,6 +237,28 @@ h1 {
   color: var(--muted);
 }
 
+.banner {
+  margin: 0 0 1.5rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.banner.error {
+  color: var(--error);
+}
+
+.task-form button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.task-form input:disabled,
+.task-form textarea:disabled,
+.task-form select:disabled {
+  opacity: 0.7;
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;

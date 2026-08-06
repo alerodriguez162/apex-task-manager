@@ -34,13 +34,11 @@ Task fields: `title`, `description`, `status` (`todo` \| `in_progress` \| `done`
 
 Workflow: one branch per day → merge into `main` at end of day.
 
-## Frontend (Day 3)
+## Frontend
 
-UI shell with local mock data:
+**Day 3 — UI shell:** form + list with mock local data.
 
-- Header + form to create tasks (title, description, status, priority)
-- Task list with status/priority badges
-- State held in the client (no API yet — Day 4)
+**Day 4 — Integration:** `GET /api/tasks` and `POST /api/tasks` wired from the client (loading + error states).
 
 ## Getting started
 
