@@ -40,6 +40,25 @@ Workflow: one branch per day → merge into `main` at end of day.
 
 **Day 4 — Integration:** `GET /api/tasks` and `POST /api/tasks` wired from the client (loading + error states).
 
+**Day 5 — Features:** edit (`PATCH`), delete (`DELETE`), filters by status/priority.
+
+**Day 6 — Polish:** client/server validation, dismissible notices, search, status chip, URL filters, loading skeletons.
+
+## Production
+
+```bash
+npm run build          # typecheck + build client & server
+npm run start          # serve API (after build)
+npm run dev:server     # API on :3001
+npm run dev:client     # UI on :5173
+```
+
+Deploy (Vercel): frontend static + `/api` serverless (SQLite en `/tmp` en Vercel).
+
+```bash
+npx vercel --prod
+```
+
 ## Getting started
 
 ```bash
