@@ -6,12 +6,5 @@
   "framework": null,
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" }
-  ],
-  "functions": {
-    "api/index.ts": {
-      "memory": 1024,
-      "maxDuration": 10,
-      "includeFiles": "{server/src/**,node_modules/better-sqlite3/**,node_modules/bindings/**,node_modules/file-uri-to-path/**}"
-    }
-  }
+  ]
 }
