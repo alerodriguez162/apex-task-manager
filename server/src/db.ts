@@ -5,7 +5,9 @@ import { fileURLToPath } from 'node:url'
 import type { CreateTaskInput, Task, TaskPriority, TaskStatus, UpdateTaskInput } from './types.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const dataDir = path.join(__dirname, '..', 'data')
+const dataDir = process.env.VERCEL
+  ? path.join('/tmp', 'apex-task-manager')
+  : path.join(__dirname, '..', 'data')
 const dbPath = path.join(dataDir, 'tasks.db')
 
 fs.mkdirSync(dataDir, { recursive: true })
